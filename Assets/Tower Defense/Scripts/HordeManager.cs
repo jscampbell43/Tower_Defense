@@ -10,10 +10,16 @@ public class HordeManager : MonoBehaviour
   public Wave enemyWave;
   public Path enemyPath;
 
+	public static Transform targetEnemy; 
+
   //Delegate for alerting CoinPurse that an Enemy has died
   public delegate void HordeEnemyDestroyedDelegate();
 
   public event HordeEnemyDestroyedDelegate hordeEnemyDestroyedEvent;
+
+private int numOfEnemies = 0;
+public GameObject canvas;
+	public GameObject restartButton;
   
   IEnumerator Start()
   {
@@ -26,6 +32,10 @@ public class HordeManager : MonoBehaviour
 
   }
 
+	void Update(){
+	targetEnemy = GameObject.Find("SmallBadGuy(Clone)").transform;
+}
+
   //pick our enemy to spawn
   //spawn it
   //wait
@@ -37,9 +47,12 @@ public class HordeManager : MonoBehaviour
       for (int j = 0; j < enemyWave.groupsOfEnemiesInWave[i].numberOfSmall; j++)
       {
         Enemy spawnedEnemy = Instantiate(enemyWave.groupsOfEnemiesInWave[i].smallMichaelEnemy).GetComponent<Enemy>();
-        // Subscribe OnEnemyDestroyed function for each Enemies enemyDestroyedEvent
+        numOfEnemies++;
+		Debug.Log(numOfEnemies + " Enemies");
+		// Subscribe OnEnemyDestroyed function for each Enemies enemyDestroyedEvent
         FindObjectOfType<Enemy>().enemyDestroyedEvent += OnEnemyDestroyed;
-        spawnedEnemy.route = enemyPath;
+        targetEnemy = GameObject.Find("SmallBadGuy(Clone)").transform;
+		spawnedEnemy.route = enemyPath;
         yield return new WaitForSeconds(enemyWave.groupsOfEnemiesInWave[i].coolDownBetweenSmallEnemies);
 
       }
@@ -61,6 +74,12 @@ public class HordeManager : MonoBehaviour
   {
     Debug.Log("Told Horde that enemy was destroyed");
     // Trigger Enemy Death Event in CoinPurse
+	numOfEnemies--;
+	if(numOfEnemies == 0){
+		// Instantiate restart button
+		GameObject newButton = Instantiate(restartButton);
+		newButton.transform.SetParent(canvas.transform, false);
+	}
     hordeEnemyDestroyedEvent();
   }
 }

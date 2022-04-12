@@ -5,8 +5,14 @@ using UnityEngine;
 public class PlaceTower9001 : MonoBehaviour
 {
   public GameObject Tower;
-
+  //public static Transform 
+  
   public GameObject World;
+
+  public static int numberOfTowers = 0;
+
+
+	//public static Transform targeTower; 
     // Start is called before the first frame update
     void Start()  
     {
@@ -24,13 +30,14 @@ public class PlaceTower9001 : MonoBehaviour
           if (hit.transform.tag == "TowerSpot")
           {
             // Check CoinPurse variable to see if at least 5 coins are available
-            if (CoinPurse.currentCoins >= 5)
+            if (CoinPurse.currentCoins >= 2)
             {
               //Book keeping
               // if good and if enough coins place Tower and reduce coins by 5
               hit.transform.gameObject.SetActive(false);
               PlaceTower(hit.transform.position);
-              CoinPurse.currentCoins = CoinPurse.currentCoins - 5;
+              CoinPurse.currentCoins = CoinPurse.currentCoins - 1;
+              numberOfTowers += 1;
             }
           }
         else
@@ -49,5 +56,6 @@ public class PlaceTower9001 : MonoBehaviour
     {
       //Book keeping
       Instantiate(Tower, position, Quaternion.identity, World.transform);
+		//targeTower = GameObject.Find("Tower(Clone)").transform;
     }
 }
